@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品登録</title>
+</head>
+<body>
+<h1>登録</h1>
+  <form action="{{url_for('register_exe')}}" method="post">
+    商品名：<input type="text" name="name"><br>
+    種別：<input type="text" name="types"><br>
+    価格：<input type="text" name="price"><br>
+    在庫数：<input type="number" name="stock"><br>
+    コメント：<input type="text" name="comments"><br>
+    サイズ：<input type="text" name="size"><br>
+    <button type="submit">登録</button>
+  </form>
+</body>
+</html>

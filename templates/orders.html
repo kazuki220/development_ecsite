@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>注文履歴</title>
+</head>
+<body>
+    <h1>注文履歴</h1>
+    <ul>
+        {% for order in orders %}
+        <li>
+            <h2>注文番号: {{ order['id'] }}</h2>
+            <p>合計金額: {{ order['total_price'] }} 円</p>
+            <ul>
+                {% for item in order['items'] %}
+                <li>
+                    <strong>商品名:</strong> {{ item['product']['name'] }}
+                    <br>
+                    <strong>価格:</strong> {{ item['product']['price'] }} 円
+                    <br>
+                    <strong>数量:</strong> {{ item['quantity'] }}
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カート</title>
+</head>
+<body>
+    <h1>カート</h1>
+    <table>
+        <tr>
+            <th>商品名</th>
+            <th>価格</th>
+            <th>数量</th>
+        </tr>
+        {% for item in cart_items %}
+        <tr>
+            <td>{{ item['product']['name'] }}</td>
+            <td>{{ item['product']['price'] }} 円</td>
+            <td>{{ item['quantity'] }}</td>
+            <td>
+                <form action="{{ url_for('remove_from_cart') }}" method="post">
+                    <input type="hidden" name="product_id" value="{{ item['product']['id'] }}">
+                    <button type="submit">削除</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3"><strong>合計金額:</strong></td>
+            <td>{{ total_price }} 円</td>
+        </tr>
+    </table>
+    <form action="{{ url_for('order.orders') }}" method="post">
+        <button type="submit">注文を確定する</button>
+    </form>
+</body>
+</html>
