@@ -6,7 +6,7 @@ cart_bp = Blueprint('cart', __name__, url_prefix='/cart')
 @cart_bp.route('/product/<int:product_id>')
 def product(product_id):
     product = get_product_by_id(product_id)
-    return render_template('product.html', products=product)
+    return render_template('item.html', product=product)
 
 @cart_bp.route('/cart', methods=['GET', 'POST'])
 def cart():
@@ -21,7 +21,7 @@ def cart():
     return render_template('cart.html', products=cart_products)
 
 def get_product_by_id(product_id):
-    for product in db.show_products:
+    for product in db.show_item():
         if product['id'] == product_id:
             return product
     return None

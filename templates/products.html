@@ -11,11 +11,11 @@
     <ul>
         {% for product in products %}
         <li>
-            <h2>{{ product['name'] }}</h2>
-            <p>種別: {{ product['types'] }} </p>
-            <p>価格: {{ product['price'] }} 円</p>
-            <p>在庫数: {{ product['stock'] }}</p>
-            <a href="{{ url_for('show_product', product_id=product['id']) }}">詳細を表示</a>
+            <p>商品名：{{ product[0] }}</p>
+            <p>種別: {{ product[1] }} </p>
+            <p>価格: {{ product[2] }} 円</p>
+            <p>在庫数: {{ product[3] }}</p>
+            <a href="{{ url_for('product.show_item', product_id=product['id']) }}">詳細を表示</a>
         </li>
         {% endfor %}
     </ul>

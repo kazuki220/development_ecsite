@@ -42,10 +42,10 @@ def get_hash(password, salt):
     return hashed_password
 
 
-def show_products():
+def show_item():
     connection = get_connection()
     cursor = connection.cursor()
-    sql = 'SELECT * FROM product'
+    sql = 'SELECT name, types, price, stock, comments, size FROM product'
     
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -63,10 +63,10 @@ def insert_product(name, types, price, stock, comments, size):
     cursor.close()
     connection.close()
     
-def show_product():
+def show_products():
     connection = get_connection()
     cursor = connection.cursor()
-    sql = 'SELECT * FROM product WHERE id = ?'
+    sql = 'SELECT name, types, price, stock FROM product'
     
     cursor.execute(sql)
     rows = cursor.fetchall()
