@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品検索</title>
+</head>
+<body>
+    <h1>商品検索</h1>
+    <form action="{{ url_for('product.search_results') }}" method="GET">
+        <label for="search_query">商品名を入力してください:</label>
+        <input type="text" id="search_query" name="query">
+        <button type="submit">検索</button>
+    </form>
+</body>
+</html>

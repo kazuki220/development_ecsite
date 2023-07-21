@@ -8,7 +8,8 @@
 </head>
 <body>
     <h1>管理者ページ</h1>
-    <a href="{{url_for('product.product_develop')}}">登録</a>
+    <a href="{{url_for('product.product_develop')}}">商品登録</a>
+    <a href="{{url_for('product.delete_product')}}">商品削除</a>
     <a href="{{url_for('product.show_products')}}">商品一覧</a>
 
     <a href="{{ url_for('logout') }}">ログアウト</a>

@@ -11,5 +11,5 @@ def orders():
 
 def get_orders(total_price, ecuser_id):
     # データベースから特定のユーザーの注文履歴を取得する処理に置き換える
-    orders = db.get_order(total_price, ecuser_id)
+    orders = db.get_orders(total_price, ecuser_id)
     return orders

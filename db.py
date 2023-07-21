@@ -63,6 +63,38 @@ def insert_product(name, types, price, stock, comments, size):
     cursor.close()
     connection.close()
     
+def delete_product(name):
+    connection = get_connection()
+    cursor = connection.cursor()
+    sql = 'DELETE FROM product WHERE name = %s'
+    cursor.execute(sql, (name,))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    
+def search_products(query):
+    connection = get_connection()
+    cursor = connection.cursor()
+    sql = 'SELECT * FROM product WHERE name LIKE %s'
+    cursor.execute(sql, ('%' + query + '%',))
+    results = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return results
+    
+def get_product_by_name(product_name):
+    connection = get_connection() 
+    cursor = connection.cursor()
+
+    sql = 'SELECT * FROM product WHERE name = %s'
+    cursor.execute(sql, (product_name,))
+    product = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    return product
+        
 def show_products():
     connection = get_connection()
     cursor = connection.cursor()
@@ -74,6 +106,59 @@ def show_products():
     cursor.close()
     connection.close()
     return rows
+
+def get_product_by_id(product_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    
+    sql = "SELECT name, types, price, stock, comments, size FROM product WHERE id = %s"
+    cursor.execute(sql, (product_id,))
+    product = cursor.fetchone()
+    
+    cursor.close()
+    connection.close()
+    
+    return product
+
+def get_products(product_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    sql = 'SELECT name, price FROM product WHERE id = %s'
+    
+    cursor.execute(sql, (product_id,))
+    rows = cursor.fetchall()
+    
+    cursor.close()
+    connection.close()
+    return rows
+
+def add_to_cart(product_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    sql = "INSERT INTO cart (product_id, quantity) VALUES (%s, 1) RETURNING id"
+
+    cursor.execute(sql, (product_id,))
+    cart_id = cursor.fetchone()[0]
+
+    connection.commit()
+    
+    cursor.close()
+    connection.close()
+    return cart_id
+
+def remove_from_cart(product_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    
+    sql = "DELETE FROM cart WHERE product_id = %s"
+
+    cursor.execute(sql, (product_id,))
+
+    connection.commit()
+    
+    cursor.close()
+    connection.close()
 
 def get_order(ecuser_id, total_price):
     connection = get_connection()

@@ -8,32 +8,28 @@
 </head>
 <body>
     <h1>カート</h1>
-    <table>
-        <tr>
-            <th>商品名</th>
-            <th>価格</th>
-            <th>数量</th>
-        </tr>
-        {% for item in cart_items %}
-        <tr>
-            <td>{{ item['product']['name'] }}</td>
-            <td>{{ item['product']['price'] }} 円</td>
-            <td>{{ item['quantity'] }}</td>
-            <td>
-                <form action="{{ url_for('remove_from_cart') }}" method="post">
-                    <input type="hidden" name="product_id" value="{{ item['product']['id'] }}">
+    <ul>
+        {% for product in producter %}
+        {% set product = get_product_by_id(product_id) %}
+        <li>
+            <p>{{ product[0] }}</p>
+            <p>{{ product[1] }} 円</p>
+            <p>{{ get_product_quantity(product_id) }}</p>
+            <p>
+                <form action="{{ url_for('cart.remove_from_cart') }}" method="post">
+                    <input type="hidden" name="product_id" value="{{ product_id }}">
                     <button type="submit">削除</button>
                 </form>
-            </td>
-        </tr>
+            </p>
+        </li>
         {% endfor %}
-        <tr>
+        <p>
             <td colspan="3"><strong>合計金額:</strong></td>
-            <td>{{ total_price }} 円</td>
-        </tr>
-    </table>
+            <td>{{ cart_products | calculate_total_price }} 円</td>
+        </p>   
     <form action="{{ url_for('order.orders') }}" method="post">
         <button type="submit">注文を確定する</button>
     </form>
+    </ul>
 </body>
 </html>
