@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注文履歴</title>
+    <title>検索結果</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,6 +20,10 @@
             padding: 10px;
             text-align: center;
             margin: 0;
+        }
+
+        p {
+            margin: 5px 0;
         }
 
         ul {
@@ -40,44 +44,23 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        h2 {
-            margin-bottom: 5px;
-        }
-
-        strong {
-            display: inline-block;
-            min-width: 80px;
-        }
-
-        ul li ul {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0;
-        }
-
-        ul li ul li {
+        li p {
             margin: 5px 0;
         }
     </style>
 </head>
 <body>
-    <h1>注文履歴</h1>
+    <h1>検索結果</h1>
+    <p>検索キーワード: {{ query }}</p>
     <ul>
-        {% for order in orders %}
+        {% for product in results %}
         <li>
-            <h2>注文番号: {{ order[0] }}</h2>
-            <p>合計金額: {{ order[1] }} 円</p>
-            <ul>
-                {% for item in order['items'] %}
-                <li>
-                    <strong>商品名:</strong> {{ item['product']['name'] }}
-                    <br>
-                    <strong>価格:</strong> {{ item['product']['price'] }} 円
-                    <br>
-                    <strong>数量:</strong> {{ item['quantity'] }}
-                </li>
-                {% endfor %}
-            </ul>
+            <p>商品名：{{ product[0] }}</p>
+            <p>種別: {{ product[1] }} </p>
+            <p>価格: {{ product[2] }} 円</p>
+            <p>在庫数: {{ product[3] }}</p>
+            <p>コメント: {{ product[4] }}</p>
+            <p>サイズ: {{ product[5] }}</p>
         </li>
         {% endfor %}
     </ul>

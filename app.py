@@ -99,9 +99,5 @@ def calculate_total_price(products):
         total_price += product[2]
     return total_price
 
-def get_product_quantity(product_id):
-    cart_items = session.get('cart_items', {})
-    return cart_items.get(str(product_id), 0)
-
 if __name__ == '__main__':
     app.run(debug=True)

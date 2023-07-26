@@ -120,29 +120,30 @@ def get_product_by_id(product_id):
     
     return product
 
-def get_products(product_id):
+def get_products_by_id(product_id):
     connection = get_connection()
     cursor = connection.cursor()
-    sql = 'SELECT name, price FROM product WHERE id = %s'
     
+    sql = 'SELECT name, price FROM product WHERE id = %s'
     cursor.execute(sql, (product_id,))
     rows = cursor.fetchall()
     
     cursor.close()
     connection.close()
+    
     return rows
 
-def add_to_cart(product_id):
+def add_to_cart(product_id, ecuser_id):
     connection = get_connection()
     cursor = connection.cursor()
 
-    sql = "INSERT INTO cart (product_id, quantity) VALUES (%s, 1) RETURNING id"
+    sql = "INSERT INTO cart (product_id, quantity, ecuser_id) VALUES (%s, 1, %s) RETURNING id"
 
-    cursor.execute(sql, (product_id,))
+    cursor.execute(sql, (product_id, ecuser_id))
     cart_id = cursor.fetchone()[0]
 
     connection.commit()
-    
+
     cursor.close()
     connection.close()
     return cart_id
@@ -159,6 +160,19 @@ def remove_from_cart(product_id):
     
     cursor.close()
     connection.close()
+    
+def get_cart_items(ecuser_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    
+    sql = "SELECT c.quantity, p.name, p.price FROM cart c JOIN product p ON c.product_id = p.id WHERE c.ecuser_id = %s"
+    cursor.execute(sql, (ecuser_id,))
+    cart_items = cursor.fetchall()
+    
+    cursor.close()
+    connection.close()
+    
+    return cart_items
 
 def get_order(ecuser_id, total_price):
     connection = get_connection()

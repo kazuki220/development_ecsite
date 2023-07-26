@@ -5,31 +5,95 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>カート</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        h1 {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        button[type="submit"] {
+            padding: 8px 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #444;
+        }
+
+        p {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        strong {
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>カート</h1>
-    <ul>
-        {% for product in producter %}
-        {% set product = get_product_by_id(product_id) %}
-        <li>
-            <p>{{ product[0] }}</p>
-            <p>{{ product[1] }} 円</p>
-            <p>{{ get_product_quantity(product_id) }}</p>
-            <p>
-                <form action="{{ url_for('cart.remove_from_cart') }}" method="post">
-                    <input type="hidden" name="product_id" value="{{ product_id }}">
-                    <button type="submit">削除</button>
-                </form>
-            </p>
-        </li>
-        {% endfor %}
-        <p>
-            <td colspan="3"><strong>合計金額:</strong></td>
-            <td>{{ cart_products | calculate_total_price }} 円</td>
-        </p>   
+    <table>
+        <thead>
+            <tr>
+                <th>商品名</th>
+                <th>価格</th>
+                <th>数量</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item[1] }}</td> <!-- 商品名 -->
+                <td>{{ item[2] }} 円</td> <!-- 価格 -->
+                <td>{{ item[0] }}</td> <!-- 数量 -->
+                <td>
+                    <form action="{{ url_for('cart.remove_from_cart') }}" method="post">
+                        <input type="hidden" name="product_id" value="{{ item[3] }}"> <!-- 商品ID -->
+                        <button type="submit">削除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>
+        <strong>合計金額: {{ total_price }} 円</strong>
+    </p>
     <form action="{{ url_for('order.orders') }}" method="post">
         <button type="submit">注文を確定する</button>
     </form>
-    </ul>
 </body>
 </html>
