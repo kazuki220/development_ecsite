@@ -84,7 +84,7 @@
             <p>在庫数: {{ product[3] }}</p>
             <p>コメント: {{ product[4] }}</p>
             <p>サイズ: {{ product[5] }}</p>
-            <form action="{{ url_for('cart.cart') }}" method="post">
+            <form action="{{ url_for('cart.add_to_cart') }}" method="post">
                 <input type="hidden" name="product_id" value="{{ product[0] }}">
                 <label for="quantity">数量:</label>
                 <input type="number" name="quantity" id="quantity" value="1">

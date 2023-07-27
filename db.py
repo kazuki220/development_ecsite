@@ -148,43 +148,75 @@ def add_to_cart(product_id, ecuser_id):
     connection.close()
     return cart_id
 
-def remove_from_cart(product_id):
+def remove_from_cart(product_id, ecuser_id):
     connection = get_connection()
     cursor = connection.cursor()
-    
-    sql = "DELETE FROM cart WHERE product_id = %s"
 
-    cursor.execute(sql, (product_id,))
+    sql = "DELETE FROM cart WHERE product_id = %s AND ecuser_id = %s"
+
+    cursor.execute(sql, (product_id, ecuser_id))
 
     connection.commit()
-    
+
     cursor.close()
     connection.close()
-    
+
 def get_cart_items(ecuser_id):
     connection = get_connection()
     cursor = connection.cursor()
-    
+
     sql = "SELECT c.quantity, p.name, p.price FROM cart c JOIN product p ON c.product_id = p.id WHERE c.ecuser_id = %s"
     cursor.execute(sql, (ecuser_id,))
     cart_items = cursor.fetchall()
-    
+
     cursor.close()
     connection.close()
-    
+
     return cart_items
+
+def calculate_cart_total(ecuser_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    sql = 'SELECT SUM(p.price * c.quantity) FROM product p ' \
+          'JOIN cart c ON p.id = c.product_id WHERE c.ecuser_id = %s'
+    cursor.execute(sql, (ecuser_id,))
+    total_price = cursor.fetchone()[0]
+
+    cursor.close()
+    connection.close()
+
+    return total_price
 
 def get_order(ecuser_id, total_price):
     connection = get_connection()
     cursor = connection.cursor()
-    sql = 'SELECT * FROM orders'
-    
-    cursor.execute(sql,(ecuser_id, total_price))
-    rows = cursor.fetchall()
-    
+
+    # Assuming you have an "orders" table to store the orders with columns like order_id, ecuser_id, total_price, etc.
+    sql = 'INSERT INTO orders (ecuser_id, total_price) VALUES (%s, %s) RETURNING order_id'
+    cursor.execute(sql, (ecuser_id, total_price))
+    order_id = cursor.fetchone()[0]
+
+    connection.commit()
+
     cursor.close()
     connection.close()
-    return rows
+
+    return order_id
+
+def get_product_name(product_name):
+    sql = 'SELECT id, name, price FROM product WHERE name = %s'
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql, (product_name,))
+        product = cursor.fetchone()
+        return product
+    except psycopg2.DatabaseError:
+        return None
+    finally:
+        cursor.close()
+        connection.close()
     
 def admin_login(user_name, password):
     sql = 'SELECT password, salt FROM ecuser WHERE user_name = %s AND user_type = %s'

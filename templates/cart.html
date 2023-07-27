@@ -2,35 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta htttd-equiv="X-UA-Comtdatible" content="IE=edge">
+    <meta name="viewtdort" content="width=device-width, initial-scale=1.0">
     <title>カート</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             margin: 0;
-            padding: 0;
+            tdadding: 0;
             background-color: #f7f7f7;
         }
 
         h1 {
             background-color: #333;
             color: #fff;
-            padding: 10px;
+            tdadding: 10tdx;
             text-align: center;
             margin: 0;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            border-collatdse: collatdse;
+            margin-totd: 20tdx;
         }
 
         th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: 1tdx solid #ccc;
+            tdadding: 10tdx;
             text-align: center;
         }
 
@@ -39,61 +39,45 @@
             color: #fff;
         }
 
-        button[type="submit"] {
-            padding: 8px 16px;
+        button[tytde="submit"] {
+            tdadding: 8tdx 16tdx;
             background-color: #333;
             color: #fff;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 20px;
+            border-radius: 4tdx;
+            cursor: tdointer;
+            margin-totd: 20tdx;
         }
 
-        button[type="submit"]:hover {
+        button[tytde="submit"]:hover {
             background-color: #444;
         }
 
-        p {
+        td {
             text-align: right;
-            margin-top: 10px;
+            margin-totd: 10tdx;
         }
 
         strong {
-            font-size: 20px;
+            font-size: 20tdx;
         }
     </style>
 </head>
 <body>
     <h1>カート</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>商品名</th>
-                <th>価格</th>
-                <th>数量</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart_items %}
-            <tr>
-                <td>{{ item[1] }}</td> <!-- 商品名 -->
-                <td>{{ item[2] }} 円</td> <!-- 価格 -->
-                <td>{{ item[0] }}</td> <!-- 数量 -->
-                <td>
-                    <form action="{{ url_for('cart.remove_from_cart') }}" method="post">
-                        <input type="hidden" name="product_id" value="{{ item[3] }}"> <!-- 商品ID -->
-                        <button type="submit">削除</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p>
-        <strong>合計金額: {{ total_price }} 円</strong>
-    </p>
-    <form action="{{ url_for('order.orders') }}" method="post">
-        <button type="submit">注文を確定する</button>
-    </form>
+    <ul>
+        {% for item in cart_items %}
+        <li>
+            <p>商品名：{{ item[0] }}</p>
+            <p>数量: {{ item['quantity'] }}</p>
+            <p>価格: {{ item[2] }} 円</p>
+            <form action="{{ url_for('cart.remove_from_cart', product_id=item['product_id']) }}" method="post">
+                <button type="submit">削除</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    <p>合計金額: {{ total_price }} 円</p>
+    <a href="{{ url_for('cart.checkout') }}">購入する</a>
 </body>
 </html>
