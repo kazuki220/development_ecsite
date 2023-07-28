@@ -69,7 +69,7 @@
         {% for item in cart_items %}
         <li>
             <p>商品名：{{ item[0] }}</p>
-            <p>数量: {{ item['quantity'] }}</p>
+            <p>数量: {{ item[3] }}</p>
             <p>価格: {{ item[2] }} 円</p>
             <form action="{{ url_for('cart.remove_from_cart', product_id=item['product_id']) }}" method="post">
                 <button type="submit">削除</button>

@@ -188,6 +188,123 @@ def calculate_cart_total(ecuser_id):
 
     return total_price
 
+def get_connection():
+    url = os.environ['DATABASE_URL']
+    connection = psycopg2.connect(url)
+    return connection
+
+def get_user_cart_id(ecuser_id):
+    sql = 'SELECT id FROM user_cart WHERE ecuser_id = %s'
+
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(sql, (ecuser_id,))
+        cart_id = cursor.fetchone()
+
+    except psycopg2.DatabaseError:
+        cart_id = None
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return cart_id[0] if cart_id else None
+
+def create_user_cart(ecuser_id):
+    sql = 'INSERT INTO user_cart (ecuser_id) VALUES (%s) RETURNING id'
+
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(sql, (ecuser_id,))
+        cart_id = cursor.fetchone()[0]
+        connection.commit()
+
+    except psycopg2.DatabaseError:
+        cart_id = None
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return cart_id
+
+def get_cart_item(cart_id, product_id):
+    sql = 'SELECT id, quantity FROM cart WHERE ecuser_id = %s AND product_id = %s'
+
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(sql, (cart_id, product_id))
+        item = cursor.fetchone()
+
+    except psycopg2.DatabaseError:
+        item = None
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return {'id': item[0], 'quantity': item[1]} if item else None
+
+def insert_cart_item(cart_id, product_id, quantity):
+    sql = 'INSERT INTO cart (quantity, product_id, ecuser_id) VALUES (%s, %s, %s)'
+
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(sql, (quantity, product_id, cart_id))
+        connection.commit()
+
+    except psycopg2.DatabaseError:
+        pass
+
+    finally:
+        cursor.close()
+        connection.close()
+
+def update_cart_item(cart_id, product_id, quantity):
+    sql = 'UPDATE cart SET quantity = %s WHERE ecuser_id = %s AND product_id = %s'
+
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(sql, (quantity, cart_id, product_id))
+        connection.commit()
+
+    except psycopg2.DatabaseError:
+        pass
+
+    finally:
+        cursor.close()
+        connection.close()
+
+def get_user_cart_items(cart_id):
+    sql = 'SELECT p.name, p.types, p.price, c.quantity FROM cart c ' \
+          'JOIN product p ON c.product_id = p.id WHERE c.ecuser_id = %s'
+
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(sql, (cart_id,))
+        cart_items = cursor.fetchall()
+
+    except psycopg2.DatabaseError:
+        cart_items = []
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return cart_items
+
 def get_order(ecuser_id, total_price):
     connection = get_connection()
     cursor = connection.cursor()

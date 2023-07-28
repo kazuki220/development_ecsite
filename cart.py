@@ -5,41 +5,56 @@ cart_bp = Blueprint('cart', __name__, url_prefix='/cart')
 
 @cart_bp.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
-    product_name = request.form.get('product_name')
-    quantity = int(request.form.get('quantity'))
+    ecuser_id = session.get('ecuser_id')
+    if ecuser_id is None:
+        return redirect(url_for('login'))
 
-    product = db.get_product_name(product_name)
+    product_id = int(request.form['product_id'])
+    quantity = int(request.form['quantity'])
 
-    if product:
-        if 'cart_items' not in session:
-            session['cart_items'] = []
+    cart_id = db.get_user_cart_id(ecuser_id)
+    if cart_id is None:
+        cart_id = db.create_user_cart(ecuser_id)
 
-        cart_item = {
-            'product_name': product[0],
-            'quantity': quantity,
-            'price': product[2]
-        }
-        session['cart_items'].append(cart_item)
-        return redirect(url_for('product.product', product_id=product[0]))
+    existing_item = db.get_cart_item(cart_id, product_id)
+
+    if existing_item:
+        db.update_cart_item(cart_id, product_id, existing_item['quantity'] + quantity)
     else:
-        return render_template('error.html', error_message='ログインしていません。')
+        db.insert_cart_item(cart_id, product_id, quantity)
+
+    return redirect(url_for('cart.show_cart'))
+
+@cart_bp.route('/cart')
+def show_cart():
+    ecuser_id = session.get('ecuser_id')
+    if ecuser_id is None:
+        return redirect(url_for('login'))
+
+    cart_id = db.get_user_cart_id(ecuser_id)
+
+    if cart_id is None:
+        return render_template('cart.html', cart_items=[])
+
+    cart_items = db.get_user_cart_items(cart_id)
+    return render_template('cart.html', cart_items=cart_items)
 
 @cart_bp.route('/remove_from_cart/<int:product_id>', methods=['POST'])
 def remove_from_cart(product_id):
-    cart_items = session.get('cart_items', [])
+    ecuser_id = session.get('ecuser_id')
+    if ecuser_id is None:
+        return redirect(url_for('login'))
 
-    for item in cart_items:
-        if item['product_id'] == product_id:
-            cart_items.remove(item)
-            break
+    cart_id = db.get_user_cart_id(ecuser_id)
 
-    session['cart_items'] = cart_items
+    if cart_id is not None:
+        db.remove_from_cart(product_id, cart_id)
 
-    return redirect(url_for('cart.view_cart'))
+    return redirect(url_for('cart.show_cart'))
 
 @cart_bp.route('/view', methods=['GET', 'POST'])
 def view_cart():
-    ecuser_id = session.get('user_id')
+    ecuser_id = session.get('ecuser_id')
     if ecuser_id:
         cart_items = db.get_cart_items(ecuser_id)
         total_price = db.calculate_cart_total(ecuser_id)
